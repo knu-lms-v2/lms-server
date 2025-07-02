@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'social_django', # social-auth-app-django (OAuth 라이브러리)
+    'users',
 ]
 
 MIDDLEWARE = [
