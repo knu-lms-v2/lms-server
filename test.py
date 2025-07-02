@@ -3,7 +3,7 @@
 import canvasapi
 
 API_URL = "https://knulms.kongju.ac.kr/"
-TOKEN = "LN4Gg3nZ6tFoRPKAQAVYuyf5mh6mMr3rmk7dFtykp3FxfjsDGtWWVknbGMYv2y42"
+TOKEN = "" 
 
 canvas = canvasapi.Canvas(API_URL, TOKEN)
 
