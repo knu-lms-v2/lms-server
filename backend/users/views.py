@@ -1,6 +1,7 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from canvasapi import Canvas
+from .services import get_user_token, save_user_token
 import json
 
 # Create your views here.
@@ -23,3 +24,13 @@ def validate_token(req):
             return JsonResponse({'valid': False, 'error': str(e)}, status=400)
     else:
         return JsonResponse({'error': 'POST 요청만 허용됩니다.'}, status=405)
+    
+def save_token_view(req):
+    if req.method == 'POST':
+        token = req.POST.get('token')
+        save_user_token(req.user, token)
+        return JsonResponse({'status': 'ok'})
+
+def get_token_view(req):
+    token = get_user_token(req.user)
+    return JsonResponse({'token': token})
