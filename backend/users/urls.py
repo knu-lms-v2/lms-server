@@ -5,5 +5,4 @@ app_name = "user"
 
 urlpatterns = [
     path('validate-token/', views.validate_token, name='validate_token'),
-    path('save-token/', views.save_token_view, name='save_token_view'),
 ]

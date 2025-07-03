@@ -18,19 +18,12 @@ def validate_token(req):
             canvas = Canvas(API_URL, token)
             user = canvas.get_current_user() # 유효성 검사
 
+            save_user_token(token)
+
             # 정상적인 user 정보일 경우
-            return JsonResponse({'valid': True, 'user': {'id': user.id, 'name': user.name}})
+            return JsonResponse({'userName': user.name})
         except Exception as e:
+            print(f"Exception: {e}")
             return JsonResponse({'valid': False, 'error': str(e)}, status=400)
     else:
         return JsonResponse({'error': 'POST 요청만 허용됩니다.'}, status=405)
-    
-def save_token_view(req):
-    if req.method == 'POST':
-        token = req.POST.get('token')
-        save_user_token(req.user, token)
-        return JsonResponse({'status': 'ok'})
-
-def get_token_view(req):
-    token = get_user_token(req.user)
-    return JsonResponse({'token': token})
