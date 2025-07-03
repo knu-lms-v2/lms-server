@@ -30,8 +30,9 @@ ALLOWED_HOSTS = [
 ]
 
 # 개발 테스트용 (테스트 끝나면 False로 돌리기)
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False
 
+# 프론트엔드 접속 시도 허용
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
 ]
