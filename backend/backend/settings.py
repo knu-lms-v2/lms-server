@@ -30,10 +30,13 @@ ALLOWED_HOSTS = [
 ]
 
 # 개발 테스트용 (테스트 끝나면 False로 돌리기)
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_ALL_ORIGINS = True
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+]
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
