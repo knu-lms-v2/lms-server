@@ -26,11 +26,12 @@ SECRET_KEY = ***REMOVED***
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '172.20.10.9', # 백엔드 사설 IP
+    '172.20.10.9', # Hotspot private IP
+    '10.2.14.40', # eduroam private IP
 ]
 
-# 개발 테스트용 (테스트 끝나면 False로 돌리기)
-CORS_ALLOW_ALL_ORIGINS = False
+# 개발 테스트용
+CORS_ALLOW_ALL_ORIGINS = True
 
 # 프론트엔드 접속 시도 허용
 CSRF_TRUSTED_ORIGINS = [

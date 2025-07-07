@@ -5,4 +5,5 @@ app_name = "user"
 
 urlpatterns = [
     path('validate-token/', views.validate_token, name='validate_token'),
+    path('logout/', views.logout, name='logout'),
 ]
