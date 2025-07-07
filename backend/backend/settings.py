@@ -26,8 +26,9 @@ SECRET_KEY = 'django-insecure-011+40kll-tw&p6)wp1u)r#x#y7imv2#dp59jhl96e@&w2n#&!
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '172.20.10.9', # Hotspot private IP
+    '172.20.10.9', # my Hotspot private IP
     '10.2.14.40', # eduroam private IP
+    'localhost',
 ]
 
 # 개발 테스트용

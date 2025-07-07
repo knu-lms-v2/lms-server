@@ -3,6 +3,6 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class EncryptedToken(models.Model):
-    token = models.BinaryField()
+    token = models.BinaryField(unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
