@@ -26,8 +26,9 @@ SECRET_KEY = ***REMOVED***
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '172.20.10.9', # Hotspot private IP
+    '172.20.10.9', # my Hotspot private IP
     '10.2.14.40', # eduroam private IP
+    'localhost',
 ]
 
 # 개발 테스트용
