@@ -29,14 +29,19 @@ ALLOWED_HOSTS = [
     '172.20.10.9', # my Hotspot private IP
     '10.2.14.40', # eduroam private IP
     'localhost',
+    '27ce2d946158.ngrok-free.app', # ngrok address
 ]
 
 # 개발 테스트용
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "https://27ce2d946158.ngrok-free.app",  # ngrok address
+]
 
 # 프론트엔드 접속 시도 허용
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
+    "https://27ce2d946158.ngrok-free.app", # ngrok address
 ]
 
 # Application definition

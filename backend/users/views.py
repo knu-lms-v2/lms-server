@@ -1,7 +1,7 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from canvasapi import Canvas
-from .services import save_user_token
+from .services import save_user_token, get_token_by_username
 from .utils import encrypt_token
 from .models import EncryptedToken
 import json
@@ -32,11 +32,13 @@ def logout(req):
     if req.method == "POST":
         try:
             data = json.loads(req.body)
-            token = data.get('token')
+            user_name = data.get('user_name')
+            if not user_name:
+                return JsonResponse({'success': False, 'error': 'user_name이 없습니다.'}, status=400)
+            token = get_token_by_username(user_name)
             if not token:
                 return JsonResponse({'success': False, 'error': '토큰이 없습니다.'}, status=400)
-            encrypted = encrypt_token(token)
-            deleted, _ = EncryptedToken.objects.filter(token=encrypted).delete()
+            deleted, _ = EncryptedToken.objects.filter(token=token, username=user_name).delete()
             if deleted:
                 return JsonResponse({'success': True})
             else:
