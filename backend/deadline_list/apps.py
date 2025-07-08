@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class ScheduleConfig(AppConfig):
+class DeadlineListConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'schedule'
+    name = 'deadline_list'
