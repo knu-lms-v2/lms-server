@@ -47,8 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders', # cors 정책
-    'social_django', # social-auth-app-django (OAuth 라이브러리)
+    'corsheaders', # cors 정책)
     'users',
 ]
 
