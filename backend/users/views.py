@@ -18,8 +18,9 @@ def validate_token(req):
             API_URL = "https://knulms.kongju.ac.kr/"
             canvas = Canvas(API_URL, token)
             user = canvas.get_current_user()  # 유효성 검사
-            save_user_token(token)
-            return JsonResponse({'user_name': user.name})
+            user_name = user.name
+            save_user_token(token, user_name)
+            return JsonResponse({'user_name': user_name})
         except Exception as e:
             return JsonResponse({'valid': False, 'error': str(e)}, status=400)
     else:
