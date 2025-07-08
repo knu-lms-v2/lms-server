@@ -7,5 +7,5 @@ def save_user_token(token):
     if not EncryptedToken.objects.filter(token=encrypted).exists():
         EncryptedToken.objects.create(token=encrypted)
 
-def get_user_token():
+def get_user_token(userName):
     pass

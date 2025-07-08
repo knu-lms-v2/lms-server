@@ -19,7 +19,7 @@ def validate_token(req):
             canvas = Canvas(API_URL, token)
             user = canvas.get_current_user()  # 유효성 검사
             save_user_token(token)
-            return JsonResponse({'userName': user.name})
+            return JsonResponse({'user_name': user.name})
         except Exception as e:
             return JsonResponse({'valid': False, 'error': str(e)}, status=400)
     else:
