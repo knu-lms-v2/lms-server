@@ -1,10 +1,11 @@
-from datetime import timedelta, timezone
+from datetime import timedelta
 import json
 import re
 from canvasapi import Canvas
 from users.services import get_token_by_username
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
 
 # Create your views here.
 @csrf_exempt
@@ -33,11 +34,8 @@ def upcoming(req):
     try:
         API_URL = "https://knulms.kongju.ac.kr/"
         canvas = Canvas(API_URL, token)
-        print("test3")
         user = canvas.get_current_user()
-        print("test")
         courses = user.get_courses()
-        print("test2")
     except Exception as e:
         return JsonResponse({'success': False, 'error': f'Canvas API 오류: {str(e)}'}, status=400)
 
@@ -45,14 +43,14 @@ def upcoming(req):
     end = now + timedelta(days=7)
     deadlines = []
 
-    # for course in courses:
-    #     print(course.id, course.name, course.course_code)
-    #     # 과제 목록
-    #     for assignment in course.get_assignments():
-    #         print("  - Assignment:", assignment.name, assignment.due_at)
-    #     # 퀴즈 목록
-    #     for quiz in course.get_quizzes():
-    #         print("  - Quiz:", quiz.title, quiz.due_at)
-    #     # 모듈(강의자료) 목록
-    #     for module in course.get_modules():
-    #         print("  - Module:", module.name)
+    for course in courses:
+        print(dir(course))
+        # 과제 목록
+        for assignment in course.get_assignments():
+            print("  - Assignment:", assignment.name, assignment.due_at)
+        # 퀴즈 목록
+        for quiz in course.get_quizzes():
+            print("  - Quiz:", quiz.title, quiz.due_at)
+        # 모듈(강의자료) 목록
+        for module in course.get_modules():
+            print("  - Module:", module.name)
