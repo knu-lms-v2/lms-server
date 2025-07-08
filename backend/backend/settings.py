@@ -49,9 +49,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders', # cors 정책
     'users',
-    'assignments',
-    'lectures',
-    'exams',
 ]
 
 MIDDLEWARE = [
