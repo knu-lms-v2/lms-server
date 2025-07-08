@@ -14,5 +14,5 @@ def encrypt_token(token: str) -> str:
 
 def decrypt_token(encrypted_token: str) -> str:
     """암호화된 토큰을 복호화해서 원본 토큰 반환"""
-    decrypted = cipher_suite.decrypt(encrypt_token.encode())
+    decrypted = cipher_suite.decrypt(encrypted_token.encode())
     return decrypted.decode()

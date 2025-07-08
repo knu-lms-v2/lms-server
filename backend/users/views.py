@@ -38,7 +38,7 @@ def logout(req):
             token = get_token_by_username(user_name)
             if not token:
                 return JsonResponse({'success': False, 'error': '토큰이 없습니다.'}, status=400)
-            deleted, _ = EncryptedToken.objects.filter(token=token, username=user_name).delete()
+            deleted, _ = EncryptedToken.objects.filter(username=user_name).delete()
             if deleted:
                 return JsonResponse({'success': True})
             else:
