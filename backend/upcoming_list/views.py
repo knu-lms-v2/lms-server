@@ -1,14 +1,58 @@
 from datetime import timedelta, timezone
+import json
+import re
+from canvasapi import Canvas
+from users.services import get_token_by_username
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
+@csrf_exempt
 def upcoming(req):
-    if req.method == 'GET':
-        now = timezone.now()
-        end = now + timedelta(days=7)
+    if req.method != 'POST':
+        return JsonResponse({'error': 'POST 요청이 아닙니다.'}, status=405)
+    
+    # user_name 가져오기
+    try:
+        data = json.loads(req.body)
+        user_name = data.get('user_name')
+        if not user_name:
+            return JsonResponse({'success': False, 'error': 'user_name이 없습니다.'}, status=400)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': f'요청 파싱 오류: {str(e)}'}, status=400)
 
-        # DB 필터링 부분
+    # 토큰 조회
+    try:
+        token = get_token_by_username(user_name)
+        if not token:
+            return JsonResponse({'success': False, 'error': '토큰이 없습니다.'}, status=400)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': f'토큰 조회 오류: {str(e)}'}, status=400)
+       
+    # Canvas API 연결
+    try:
+        API_URL = "https://knulms.kongju.ac.kr/"
+        canvas = Canvas(API_URL, token)
+        print("test3")
+        user = canvas.get_current_user()
+        print("test")
+        courses = user.get_courses()
+        print("test2")
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': f'Canvas API 오류: {str(e)}'}, status=400)
 
-        
-    else:
-        return JsonResponse()
+    now = timezone.now()
+    end = now + timedelta(days=7)
+    deadlines = []
+
+    # for course in courses:
+    #     print(course.id, course.name, course.course_code)
+    #     # 과제 목록
+    #     for assignment in course.get_assignments():
+    #         print("  - Assignment:", assignment.name, assignment.due_at)
+    #     # 퀴즈 목록
+    #     for quiz in course.get_quizzes():
+    #         print("  - Quiz:", quiz.title, quiz.due_at)
+    #     # 모듈(강의자료) 목록
+    #     for module in course.get_modules():
+    #         print("  - Module:", module.name)
