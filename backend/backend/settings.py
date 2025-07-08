@@ -47,8 +47,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders', # cors 정책)
+    'corsheaders', # cors 정책
     'users',
+    'assignments',
+    'lectures',
+    'exams',
 ]
 
 MIDDLEWARE = [
