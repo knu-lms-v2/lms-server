@@ -24,13 +24,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = ***REMOVED***
-NGROK = 'https://8247bec083cf.ngrok-free.app'
+
+NGROK = '8247bec083cf.ngrok-free.app'
+NGROK_URL = 'https://' + NGROK
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '172.20.10.9', # my Hotspot private IP
-    '10.2.14.40', # eduroam private IP
     'localhost',
     '8247bec083cf.ngrok-free.app', # ngrok address
 ]
@@ -38,13 +38,13 @@ ALLOWED_HOSTS = [
 # 개발 테스트용
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    NGROK,  # ngrok address
+    NGROK_URL,  # ngrok address
 ]
 
 # 프론트엔드 접속 시도 허용
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
-    NGROK, # ngrok address
+    NGROK_URL, # ngrok address
 ]
 
 # Application definition
