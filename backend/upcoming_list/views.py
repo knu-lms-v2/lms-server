@@ -12,10 +12,8 @@ def get_d_day_str(due_at) -> str:
     D-Day 형식으로 반환한다. D-0일 경우 "D-0 (HH시간)"을 포함하여 반환한다.
     """
     try:
-        print("파싱 시도: ", due_at)
         due_dt = datetime.strptime(due_at, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
         now = datetime.now(timezone.utc)
-        print("파싱 성공: ", due_dt)
         delta = due_dt - now
         if delta.days > 0:
             return f"D-{delta.days}"
@@ -102,12 +100,17 @@ def upcoming(req):
         # 2. 과제 정보에 week 추가
         try:
             assignments = list(course.get_assignments())
-            for a in course.get_assignments():
+            for a in assignments:
                 if not hasattr(a, "due_at") or not a.due_at:
                     continue
                 d_day_str = get_d_day_str(a.due_at)
+                # 1. 모듈에서 주차 추출
                 week_raw = module_week_map.get(a.id, None)
                 week_clean = extract_week_number(week_raw) if week_raw else None
+                # 2. 모듈에서 못 찾으면 과제명에서 주차 추출
+                if not week_clean:
+                    week_clean = extract_week_number(a.name)
+                # 3. 둘 다 없으면 None
                 lecture_data.append({
                     'type': '과제',
                     'course_name': course_name,
