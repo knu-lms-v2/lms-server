@@ -41,58 +41,42 @@ def upcoming(req):
         courses = user.get_courses()
     except Exception as e:
         return JsonResponse({'success': False, 'error': f'Canvas API 오류: {str(e)}'}, status=400)
-
-    # 최대 7일까지의 날짜 필터링 설정
-    now = timezone.now()
-    end = now + timedelta(days=7)
     
+    # json 반환 리스트
     lecture_data = []
-    """
-    {
-        'course_name': course.name,
-        'title': assignment.name,
-        'remaining_days': assignment.due_at, 남은 D-day (D-0이면 HH시간 출력)
-    }
-    """
 
     # 강의 목록 조회
     courses_list = list(courses)
     filtered_courses = [course for course in courses_list if not getattr(course, "access_restricted_by_date", False)]
 
     for course in filtered_courses:
-        print(vars(course))
         course_name = getattr(course, "name", "이름없음")
         
         # 과제 정보
-        for a in course.get_assignments():
-            title = a.name
-            if not a.due_at:
-                print(f"title: {title}")
-                continue
-            try:
-                due_dt = datetime.strptime(a.due_at, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
-            except Exception:
-                continue
-
-            start_date = datetime(2025, 6, 1, 0, 0, 0, tzinfo=timezone.utc)
-            end_date = datetime(2025, 6, 30, 23, 59, 59, tzinfo=timezone.utc)
-
-            if start_date <= due_dt <= end_date:
-                delta = due_dt - now
-                if delta.days > 0:
-                    remaining_days = f"D-{delta.days}"
-                elif delta.days == 0:
-                    hours = delta.seconds // 3600
-                    remaining_days = f"D-0 ({hours}시간)"
-                else:
+        try:
+            assignments = list(course.get_assignments())
+            for a in course.get_assignments():
+                if not hasattr(a, "due_at") or not a.due_at:
                     continue
-            
+                lecture_data.append({
+                    'type': 'assignment',
+                    'course_name': course_name,
+                    'title': a.name,
+                    'due_at': a.due_at
+                })
+        except Exception as e:
+            continue
 
-
-            lecture_data.append({
-                'course_name': course_name,
-                'title': title,
-                'remaining_days': remaining_days
-            })
-
+        # 모듈(영상) 정보
+        # try:
+        #     modules = list(course.get_modules())
+        #     for m in modules:
+        #         lecture_data.append({
+        #             'type': 'module',
+        #             'course_name': course_name,
+        #             'title': m.name,
+        #             'completed_at': getattr(m, "completed_at", None)
+        #         })
+        # except Exception as e:
+        #     continue
     return JsonResponse({'success': True, 'lecture_data': lecture_data})
