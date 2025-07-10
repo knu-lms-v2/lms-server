@@ -1,41 +1,6 @@
-from datetime import datetime, timedelta
-import re
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from datetime import timezone
-from .convert import convert_user_name_to_token
-
-def get_d_day_str(due_dt) -> str:
-    """
-    D-Day 형식으로 반환한다. D-0일 경우 "D-0 (HH시간)"을 포함하여 반환한다.
-    """
-    now = datetime.now(timezone.utc)
-    end = now + timedelta(days=7)
-
-    if now <= due_dt <= end:
-        try:
-            delta = due_dt - now
-            hours = delta.seconds // 3600
-            minutes = (delta.seconds % 3600) // 60
-            if delta.days > 0:
-                return f"D-{delta.day}"
-            elif delta.days == 0:
-                return f"D-0 ({hours}시간 {minutes}분전)"
-            elif hours == 0:
-                return f"D-0 ({minutes}분전)"
-            else:
-                return "마감됨"
-        except Exception as e:
-            print(f"오류: {e}")
-
-def extract_week_number(week_str) -> str:
-    """
-    "00주차" 형식으로 반환한다.
-    """
-    match = re.search(r'(\d+)\s*주', week_str)
-    if match:
-        return f"{match.group(1)}주차"
-    return None
+from upcoming_list.services import convert_user_name_to_token, get_d_day_str, extract_week_number
 
 # Create your views here.
 @csrf_exempt
@@ -47,7 +12,7 @@ def upcoming(req):
         return JsonResponse({'error': 'POST 요청이 아닙니다.'}, status=405)
     
     # 토큰 반환
-    convert_user_name_to_token(req)
+    courses = convert_user_name_to_token(req)
 
     # json 반환 리스트
     lecture_data = []
@@ -86,8 +51,6 @@ def upcoming(req):
 
                 # 1. 모듈에서 주차 추출
                 week_raw = module_week_map.get(a.id, None)
-                if not week_raw:
-                    continue
                 week_clean = extract_week_number(week_raw)
                 
                 # 2. 모듈에서 못 찾으면 과제명에서 주차 추출
