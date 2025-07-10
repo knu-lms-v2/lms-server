@@ -7,12 +7,11 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from datetime import timezone
 
-def get_d_day_str(due_at) -> str:
+def get_d_day_str(due_dt) -> str:
     """
     D-Day 형식으로 반환한다. D-0일 경우 "D-0 (HH시간)"을 포함하여 반환한다.
     """
     try:
-        due_dt = datetime.strptime(due_at, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
         now = datetime.now(timezone.utc)
         delta = due_dt - now
         if delta.days > 0:
@@ -21,7 +20,7 @@ def get_d_day_str(due_at) -> str:
             hours = delta.seconds // 3600
             return f"D-0 ({hours}시간)"
         else:
-            return "마감"
+            return "마감됨"
     except Exception as e:
         print("파싱 실패: ", due_at, e)
         return "날짜 오류"
@@ -103,7 +102,7 @@ def upcoming(req):
             for a in assignments:
                 if not hasattr(a, "due_at") or not a.due_at:
                     continue
-                d_day_str = get_d_day_str(a.due_at)
+                d_day_str = get_d_day_str(a.due_at_date)
                 # 1. 모듈에서 주차 추출
                 week_raw = module_week_map.get(a.id, None)
                 week_clean = extract_week_number(week_raw) if week_raw else None
