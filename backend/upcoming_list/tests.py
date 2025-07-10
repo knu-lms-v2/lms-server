@@ -39,5 +39,3 @@ class CanvasApiTest(TestCase):
                         continue
             except Exception:
                 pass
-
-        print(module_week_map)
