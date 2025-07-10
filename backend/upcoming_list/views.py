@@ -1,6 +1,7 @@
+from datetime import datetime, timezone
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from upcoming_list.services import convert_user_name_to_token, get_d_day_str, extract_week_number
+from upcoming_list.services import convert_user_name_to_token, get_d_day_str, get_week_from_maps
 
 # Create your views here.
 @csrf_exempt
@@ -11,12 +12,15 @@ def upcoming(req):
     if req.method != 'POST':
         return JsonResponse({'error': 'POST 요청이 아닙니다.'}, status=405)
     
-    # 토큰 반환
+    # user_name -> token -> canvas api 연결하여 courses 반환
     courses = convert_user_name_to_token(req)
-
+    if not courses:
+        return JsonResponse({'success': False, 'error': '토큰 또는 강의 정보 없음'}, status=400)
+    
     # json 반환 리스트
     lecture_data = []
-    
+
+    # 강의, 영상, 시험의 "id: week" 값
     assignment_week_map = {}
     exam_week_map = {}
     video_week_map = {}
@@ -33,41 +37,34 @@ def upcoming(req):
         
         # 1. 모듈 정보 수집
         try:
-            modules = list(course.get_modules())
-            for m in modules:
+            for m in course.get_modules():
                 week_name = m.name # 주차학습의 1주차, 2주차, ...
-                try:
-                    items = list(m.get_module_items())
-                    for item in items: # 주차학습 1주차의 내용들...
-                        if item.type == "Assignment":
-                            upcoming_type = "과제"
-                            assignment_week_map[item.content_id] = m.name
-                        elif item.type == "Quiz":
-                            upcoming_type = "시험"
-                            exam_week_map[item.content_id] = m.name
-                        elif item.type == "File":
-                            upcoming_type = "영상"
-                            video_week_map[item.content_id] = m.name
-                except Exception:
-                    continue
+                for item in m.get_module_items(): # 주차학습 1주차의 내용들...
+                    if item.type == "Assignment":
+                        upcoming_type = "과제"
+                        assignment_week_map[item.content_id] = week_name
+                    elif item.type == "Quiz":
+                        upcoming_type = "시험"
+                        exam_week_map[item.content_id] = week_name
+                    elif item.type == "File":
+                        upcoming_type = "영상"
+                        video_week_map[item.content_id] = week_name
         except Exception:
-            pass
+            continue
 
         # 2. 과제 정보에 week 추가
         try:
-            assignments = list(course.get_assignments())
-            for a in assignments:
-                if not hasattr(a, "due_at") or not a.due_at:
+            for a in course.get_assignments():
+                if not getattr(a, "due_at", None):
                     continue
-                d_day_str = get_d_day_str(a.due_at_date)
 
-                # 1. 모듈에서 주차 추출
-                week_raw = assignment_week_map.get(a.id, None)
-                week_clean = extract_week_number(week_raw) if week_raw else None
-                if not week_clean:
-                    week_clean = extract_week_number(a.name)
+                # D-day 반환
+                d_day_str = get_d_day_str(a.due_at_date)
+                if d_day_str == "마감됨":
+                    continue
+
+                week_clean = get_week_from_maps(a, assignment_week_map)
                 
-                # 3. 둘 다 없으면 None
                 lecture_data.append({
                     'type': upcoming_type,
                     'course_name': course_name,
@@ -75,5 +72,6 @@ def upcoming(req):
                     'remaining_days': d_day_str
                 })
         except Exception as e:
+            print(f"error: {e}")
             continue
     return JsonResponse({'success': True, 'lecture_data': lecture_data})

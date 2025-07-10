@@ -47,15 +47,16 @@ def get_d_day_str(due_dt) -> str:
             hours = delta.seconds // 3600
             minutes = (delta.seconds % 3600) // 60
             if delta.days > 0:
-                return f"D-{delta.day}"
+                return f"D-{delta.days}"
+            elif delta.days == 0 and hours == 0:
+                return f"{minutes}분전"
             elif delta.days == 0:
-                return f"D-0 ({hours}시간 {minutes}분전)"
-            elif hours == 0:
-                return f"D-0 ({minutes}분전)"
-            else:
-                return "마감됨"
+                return f"{hours}시간전"
+
         except Exception as e:
             print(f"오류: {e}")
+    else:
+        return "마감됨"
 
 def extract_week_number(week_str) -> str:
     """
@@ -65,3 +66,10 @@ def extract_week_number(week_str) -> str:
     if match:
         return f"{match.group(1)}주차"
     return None
+
+def get_week_from_maps(a, assignment_week_map):
+    week_raw = assignment_week_map.get(a.id)
+    week_clean = extract_week_number(week_raw) if week_raw else None
+    if not week_clean:
+        week_clean = extract_week_number(a.name)
+    return week_clean
