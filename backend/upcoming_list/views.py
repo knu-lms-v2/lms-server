@@ -11,19 +11,24 @@ def get_d_day_str(due_dt) -> str:
     """
     D-Day 형식으로 반환한다. D-0일 경우 "D-0 (HH시간)"을 포함하여 반환한다.
     """
-    try:
-        now = datetime.now(timezone.utc)
-        delta = due_dt - now
-        if delta.days > 0:
-            return f"D-{delta.days}"
-        elif delta.days == 0:
+    now = datetime.now(timezone.utc)
+    end = now + timedelta(days=7)
+
+    if now <= due_dt <= end:
+        try:
+            delta = due_dt - now
             hours = delta.seconds // 3600
-            return f"D-0 ({hours}시간)"
-        else:
-            return "마감됨"
-    except Exception as e:
-        print("파싱 실패: ", due_at, e)
-        return "날짜 오류"
+            minutes = (delta.seconds % 3600) // 60
+            if delta.days > 0:
+                return f"D-{delta.day}"
+            elif delta.days == 0:
+                return f"D-0 ({hours}시간 {minutes}분전)"
+            elif hours == 0:
+                return f"D-0 ({minutes}분전)"
+            else:
+                return "마감됨"
+        except Exception as e:
+            print(f"오류: {e}")
 
 def extract_week_number(week_str) -> str:
     """
