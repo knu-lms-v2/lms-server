@@ -25,14 +25,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = ***REMOVED***
 
-NGROK = '8247bec083cf.ngrok-free.app'
+NGROK = '69563397ed66.ngrok-free.app'
 NGROK_URL = 'https://' + NGROK
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = [
     'localhost',
-    '8247bec083cf.ngrok-free.app', # ngrok address
+    NGROK, # ngrok address
 ]
 
 # 개발 테스트용
