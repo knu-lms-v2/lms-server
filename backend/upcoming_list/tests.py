@@ -14,38 +14,30 @@ class CanvasApiTest(TestCase):
         user = canvas.get_current_user()
         print("유저 정보:", user)
 
-        dt = datetime(2025, 7, 10, 14, 55, tzinfo=timezone.utc)
-        now = datetime.now(timezone.utc)
-        end = now + timedelta(days=7)
+        # json 반환 리스트
+        lecture_data = []
+        module_week_map = {}
 
-        print(now)
-        if now <= dt <= end:
+        # 강의 목록 조회
+        courses = user.get_courses()
+        courses_list = list(courses)
+        filtered_courses = [course for course in courses_list if not getattr(course, "access_restricted_by_date", False)]
+        for course in filtered_courses:
+            course_name = getattr(course, "name", "이름없음")
+            print(course_name)
+            # 1. 모듈 정보 수집
             try:
-                delta = dt - now
-                hours = delta.seconds // 3600
-                minutes = (delta.seconds % 3600) // 60
-                if delta.days > 0:
-                    print(f"D-{delta.day}")
-                elif delta.days == 0:
-                    print(f"D-0 ({hours}시간 {minutes}분전)")
-                elif hours == 0:
-                    print(f"D-0 ({minutes}분전)")
-                else:
-                    print("마감됨")
-            except Exception as e:
-                print(f"오류: {e}")
+                modules = list(course.get_modules())
+                for m in modules:
+                    week_name = m.name
+                    try:
+                        items = list(m.get_module_items())
+                        for item in items:
+                            if item.type == "Assignment":
+                                module_week_map[item.content_id] = week_name
+                    except Exception:
+                        continue
+            except Exception:
+                pass
 
-        # courses = user.get_courses()
-        # for course in courses:
-        #     name = getattr(course, "name", None)
-        #     if name:
-        #         assignments = course.get_assignments()
-        #         assignments_list = list(assignments)
-        #         for a in assignments_list:
-        #             print(type(a.due_at_date))
-
-            # print("과목명:", name)
-            # modules = course.get_modules()
-            # for module in modules:
-            #     pass
-            #     # print("  모듈명:", module.name)
+        print(module_week_map)

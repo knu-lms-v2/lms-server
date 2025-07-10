@@ -1,5 +1,251 @@
-Found 1 test(s).
-System check identified no issues (0 silenced).
-유저 정보: 양원준(2021###54) (23667)
-2025-07-10 13:53:04.228122+00:00
-D-0 (1시간 1분전)
+{
+    "success": true,
+    "lecture_data": [
+        {
+            "type": "과제",
+            "course_name": "광고와소비자심리 01분반",
+            "week": null,
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "광고와소비자심리 01분반",
+            "week": null,
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "기후변화상식을넘어서 01분반",
+            "week": null,
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "기후변화상식을넘어서 01분반",
+            "week": null,
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "데이터베이스론 02분반",
+            "week": "1주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "데이터베이스론 02분반",
+            "week": "2주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "데이터베이스론 02분반",
+            "week": "8주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "데이터베이스론 02분반",
+            "week": "13주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "데이터베이스론 02분반",
+            "week": "11주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "데이터베이스론 02분반",
+            "week": "14주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "데이터베이스론 02분반",
+            "week": "1주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "데이터베이스론 02분반",
+            "week": "5주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "데이터베이스론 02분반",
+            "week": "9주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "데이터베이스론 02분반",
+            "week": "3주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "데이터베이스론 02분반",
+            "week": "4주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "데이터베이스론 02분반",
+            "week": "10주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "모바일프로그래밍 02분반",
+            "week": null,
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "모바일프로그래밍 02분반",
+            "week": null,
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "모바일프로그래밍 02분반",
+            "week": null,
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "빅데이터분석실습 02분반",
+            "week": null,
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "빅데이터분석실습 02분반",
+            "week": null,
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "빅데이터분석실습 02분반",
+            "week": null,
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "빅데이터분석실습 02분반",
+            "week": null,
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "빅데이터분석실습 02분반",
+            "week": null,
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "빅데이터분석실습 02분반",
+            "week": null,
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "소프트웨어공학 03분반",
+            "week": "1주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "소프트웨어공학 03분반",
+            "week": "1주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "소프트웨어공학 03분반",
+            "week": "3주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "소프트웨어공학 03분반",
+            "week": "5주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "소프트웨어공학 03분반",
+            "week": "7주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "소프트웨어공학 03분반",
+            "week": "8주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "소프트웨어공학 03분반",
+            "week": "11주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "소프트웨어공학 03분반",
+            "week": "11주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "소프트웨어공학 03분반",
+            "week": "12주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "소프트웨어공학 03분반",
+            "week": "12주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "소프트웨어공학 03분반",
+            "week": "2주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "소프트웨어공학 03분반",
+            "week": "5주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "소프트웨어공학 03분반",
+            "week": "11주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "소프트웨어공학 03분반",
+            "week": "14주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "소프트웨어공학 03분반",
+            "week": "13주차",
+            "remaining_days": null
+        },
+        {
+            "type": "과제",
+            "course_name": "소프트웨어공학 03분반",
+            "week": "13주차",
+            "remaining_days": null
+        }
+    ]
+}
