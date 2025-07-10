@@ -16,7 +16,12 @@ def upcoming(req):
 
     # json 반환 리스트
     lecture_data = []
-    module_week_map = {}
+    
+    assignment_week_map = {}
+    exam_week_map = {}
+    video_week_map = {}
+
+    upcoming_type = ""
 
     # 강의 목록 조회
     courses_list = list(courses)
@@ -30,12 +35,19 @@ def upcoming(req):
         try:
             modules = list(course.get_modules())
             for m in modules:
-                week_name = m.name
+                week_name = m.name # 주차학습의 1주차, 2주차, ...
                 try:
                     items = list(m.get_module_items())
-                    for item in items:
+                    for item in items: # 주차학습 1주차의 내용들...
                         if item.type == "Assignment":
-                            module_week_map[item.content_id] = week_name
+                            upcoming_type = "과제"
+                            assignment_week_map[item.content_id] = m.name
+                        elif item.type == "Quiz":
+                            upcoming_type = "시험"
+                            exam_week_map[item.content_id] = m.name
+                        elif item.type == "File":
+                            upcoming_type = "영상"
+                            video_week_map[item.content_id] = m.name
                 except Exception:
                     continue
         except Exception:
@@ -50,17 +62,14 @@ def upcoming(req):
                 d_day_str = get_d_day_str(a.due_at_date)
 
                 # 1. 모듈에서 주차 추출
-                week_raw = module_week_map.get(a.id, None)
-                week_clean = extract_week_number(week_raw)
-                
-                # 2. 모듈에서 못 찾으면 과제명에서 주차 추출
+                week_raw = assignment_week_map.get(a.id, None)
+                week_clean = extract_week_number(week_raw) if week_raw else None
                 if not week_clean:
-                    print(a.name)
                     week_clean = extract_week_number(a.name)
                 
                 # 3. 둘 다 없으면 None
                 lecture_data.append({
-                    'type': '과제',
+                    'type': upcoming_type,
                     'course_name': course_name,
                     'week': week_clean,
                     'remaining_days': d_day_str
