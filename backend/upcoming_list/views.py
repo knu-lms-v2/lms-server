@@ -1,11 +1,9 @@
 from datetime import datetime, timedelta
-import json
 import re
-from canvasapi import Canvas
-from users.services import get_token_by_username
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from datetime import timezone
+from .convert import convert_user_name_to_token
 
 def get_d_day_str(due_dt) -> str:
     """
@@ -34,7 +32,7 @@ def extract_week_number(week_str) -> str:
     """
     "00주차" 형식으로 반환한다.
     """
-    match = re.search(r'(\d+)\s*주차', week_str)
+    match = re.search(r'(\d+)\s*주', week_str)
     if match:
         return f"{match.group(1)}주차"
     return None
@@ -48,32 +46,9 @@ def upcoming(req):
     if req.method != 'POST':
         return JsonResponse({'error': 'POST 요청이 아닙니다.'}, status=405)
     
-    # user_name 가져오기
-    try:
-        data = json.loads(req.body)
-        user_name = data.get('user_name')
-        if not user_name:
-            return JsonResponse({'success': False, 'error': 'user_name이 없습니다.'}, status=400)
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': f'요청 파싱 오류: {str(e)}'}, status=400)
+    # 토큰 반환
+    convert_user_name_to_token(req)
 
-    # 토큰 조회
-    try:
-        token = get_token_by_username(user_name)
-        if not token:
-            return JsonResponse({'success': False, 'error': '토큰이 없습니다.'}, status=400)
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': f'토큰 조회 오류: {str(e)}'}, status=400)
-       
-    # Canvas API 연결
-    try:
-        API_URL = "https://knulms.kongju.ac.kr/"
-        canvas = Canvas(API_URL, token)
-        user = canvas.get_current_user()
-        courses = user.get_courses()
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': f'Canvas API 오류: {str(e)}'}, status=400)
-    
     # json 반환 리스트
     lecture_data = []
     module_week_map = {}
@@ -108,12 +83,18 @@ def upcoming(req):
                 if not hasattr(a, "due_at") or not a.due_at:
                     continue
                 d_day_str = get_d_day_str(a.due_at_date)
+
                 # 1. 모듈에서 주차 추출
                 week_raw = module_week_map.get(a.id, None)
-                week_clean = extract_week_number(week_raw) if week_raw else None
+                if not week_raw:
+                    continue
+                week_clean = extract_week_number(week_raw)
+                
                 # 2. 모듈에서 못 찾으면 과제명에서 주차 추출
                 if not week_clean:
+                    print(a.name)
                     week_clean = extract_week_number(a.name)
+                
                 # 3. 둘 다 없으면 None
                 lecture_data.append({
                     'type': '과제',
