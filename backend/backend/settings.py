@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = ***REMOVED***
 
-NGROK = '82a612b597d2.ngrok-free.app'
+NGROK = 'de49a51ecd39.ngrok-free.app'
 NGROK_URL = 'https://' + NGROK
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders', # cors 정책
     'users',
+    'upcoming_list',
 ]
 
 MIDDLEWARE = [
