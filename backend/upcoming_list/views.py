@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from upcoming_list.services import convert_user_name_to_token, get_d_day_str, get_week_from_maps
+from .models import UpcomingData
 
 # Create your views here.
 @csrf_exempt
@@ -64,13 +65,23 @@ def upcoming(req):
                     continue
 
                 week_clean = get_week_from_maps(a, assignment_week_map)
-                
-                lecture_data.append({
+                data = {
                     'type': upcoming_type,
                     'course_name': course_name,
                     'week': week_clean,
                     'remaining_days': d_day_str
-                })
+                }
+                lecture_data.append(data)
+
+                # DB에 저장
+                UpcomingData.objects.create(
+                    user_name=req.POST.get('user_name', ''),
+                    type=upcoming_type,
+                    course_name=course_name,
+                    week=week_clean,
+                    remaining_days=d_day_str
+                )
+
         except Exception as e:
             print(f"error: {e}")
             continue
