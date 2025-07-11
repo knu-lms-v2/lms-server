@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from django.views.decorators.http import require_GET
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from upcoming_list.services import convert_user_name_to_token, get_d_day_str, get_week_from_maps
@@ -86,3 +86,18 @@ def upcoming(req):
             print(f"error: {e}")
             continue
     return JsonResponse({'success': True, 'lecture_data': lecture_data})
+
+@require_GET
+def get_upcoming_data(req):
+    user_name = req.GET.get('user_name', '')
+    data = UpcomingData.objects.filter(user_name=user_name).order_by('-created_at')
+    result = [
+        {
+            'type': d.type,
+            'course_name': d.course_name,
+            'week': d.week,
+            'remaining_days': d.remaining_days
+        }
+        for d in data
+    ]
+    return JsonResponse({'succress': True, 'lecture_data': result})

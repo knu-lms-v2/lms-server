@@ -6,4 +6,5 @@ app_name = "deadline_list"
 # localhost:8000/api/upcoming-list/
 urlpatterns = [
     path('upcoming-events/', views.upcoming, name='upcoming'),
+    path('upcoming-data/', views.get_upcoming_data, name='get_upcoming_data')
 ]
