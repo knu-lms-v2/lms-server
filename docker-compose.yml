@@ -1,0 +1,20 @@
+services:
+    django:
+        build: ./backend
+        command: python3 manage.py runserver 0.0.0.0:8000
+        volumes:
+            - ./backend:/backend
+            - ./backend/db.sqlite3:/backend/db.sqlite3
+        ports:
+            - "8000:8000"
+        environment:
+            - DJANGO_SETTINGS_MODULE=backend.settings
+    ngrok:
+        image: ngrok/ngrok:latest
+        command: http web:8000
+        ports:
+            - "4040:4040"
+        environment:
+            - NGROK_AUTHTOKEN=2zbS1DOjj2KM2U2OIjFA7x7k7wX_88SqmuaRDuSEAehTs2NZ7
+        depends_on:
+            - web
