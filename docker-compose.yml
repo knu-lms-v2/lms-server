@@ -10,12 +10,3 @@ services:
         environment:
             - DJANGO_SETTINGS_MODULE=backend.settings
             - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,.ngrok-free.app
-    ngrok:
-        image: ngrok/ngrok:latest
-        command: http web:8000
-        ports:
-            - "4040:4040"
-        environment:
-            - NGROK_AUTHTOKEN=2zbS1DOjj2KM2U2OIjFA7x7k7wX_88SqmuaRDuSEAehTs2NZ7
-        depends_on:
-            - web
