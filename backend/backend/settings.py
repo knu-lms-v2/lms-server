@@ -23,28 +23,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ***REMOVED***
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
-NGROK = 'de49a51ecd39.ngrok-free.app'
-NGROK_URL = 'https://' + NGROK
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    'localhost',
-    NGROK, # ngrok address
-]
-
-# 개발 테스트용
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    NGROK_URL,  # ngrok address
-]
-
-# 프론트엔드 접속 시도 허용
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.ngrok-free.app']
+CORS_ALLOWED_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:5173",
-    NGROK_URL, # ngrok address
+    "http://localhost:8000",
+    "https://*.ngrok-free.app",
 ]
 
 # Application definition

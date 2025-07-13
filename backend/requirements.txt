@@ -1,1 +1,5 @@
-Django>=3.2
+Django
+django-cors-headers
+python-dotenv
+canvasapi
+cryptography
