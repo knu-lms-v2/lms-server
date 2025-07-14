@@ -2,7 +2,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from canvasapi import Canvas
 from .services import save_user_token, get_token_by_username
-from .utils import encrypt_token
 from .models import EncryptedToken
 import json
 
@@ -19,8 +18,8 @@ def validate_token(req):
             canvas = Canvas(API_URL, token)
             user = canvas.get_current_user()  # 유효성 검사
             user_name = user.name
-            save_user_token(token, user_name)
-            return JsonResponse({'user_name': user_name})
+            now = save_user_token(token, user_name)
+            return JsonResponse({'user_name': user_name, 'last_login': now})
         except Exception as e:
             return JsonResponse({'valid': False, 'error': str(e)}, status=400)
     else:
