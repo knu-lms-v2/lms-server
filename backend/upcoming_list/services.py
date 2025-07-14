@@ -1,4 +1,5 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
+from django.utils import timezone
 import json
 import re
 from canvasapi import Canvas
@@ -76,15 +77,16 @@ def get_week_from_maps(a, assignment_week_map):
     return week_clean
 
 def update_user_upcoming_list(user_name):
-    courses = convert_user_name_to_token(user_name)
-    if not courses:
-        return
-
-    # 강의, 영상, 시험의 "id: week" 값
+    lecture_data = []
     assignment_week_map = {}
     exam_week_map = {}
     video_week_map = {}
-
+    upcoming_type = ""
+    
+    courses = convert_user_name_to_token(user_name)
+    if not courses:
+        return
+    
     # 강의 목록 조회
     courses_list = list(courses)
     filtered_courses = [course for course in courses_list if not getattr(course, "access_restricted_by_date", False)]
@@ -92,7 +94,6 @@ def update_user_upcoming_list(user_name):
     # 수강 중인 과목 대상 반복
     for course in filtered_courses:
         course_name = getattr(course, "name", "이름없음")
-        upcoming_type = ""
 
         # 1. 모듈 정보 수집
         try:
@@ -123,15 +124,25 @@ def update_user_upcoming_list(user_name):
                     continue
 
                 week_clean = get_week_from_maps(a, assignment_week_map)
+                data = {
+                    'type': upcoming_type,
+                    'course_name': course_name,
+                    'week': week_clean,
+                    'remaining_days': d_day_str
+                }
+                lecture_data.append(data)
 
                 # DB에 저장
-                UpcomingData.objects.create(
+                UpcomingData.objects.update_or_create(
                     user_name=user_name,
                     type=upcoming_type,
                     course_name=course_name,
                     week=week_clean,
-                    remaining_days=d_day_str
+                    defaults={
+                        'remaining_days':d_day_str
+                    }
                 )
         except Exception:
             continue
+    return JsonResponse({'success': True, 'lecture_data': lecture_data})
     
