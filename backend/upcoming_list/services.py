@@ -3,26 +3,18 @@ from django.utils import timezone
 import json
 import re
 from canvasapi import Canvas
-from django.http import JsonResponse
 from users.services import get_token_by_username
 from .models import UpcomingData
 
-def convert_user_name_to_token(req):
-    # user_name 가져오기
-    try:
-        data = json.loads(req.body)
-        user_name = data.get('user_name')
-        if not user_name:
-            return None
-    except Exception:
-        return None
-
+def convert_user_name_to_token(user_name):
     # 토큰 조회
     try:
         token = get_token_by_username(user_name)
         if not token:
+            print("It is not token...")
             return None
-    except Exception:
+    except Exception as e:
+        print(f"error: {e}")
         return None
        
     # Canvas API 연결
@@ -32,6 +24,7 @@ def convert_user_name_to_token(req):
         user = canvas.get_current_user()
         courses = user.get_courses()
     except Exception as e:
+        print(f"error: {e}")
         return None
     
     return courses
@@ -56,7 +49,7 @@ def get_d_day_str(due_dt) -> str:
                 return f"{hours}시간전"
 
         except Exception as e:
-            print(f"오류: {e}")
+            print(f"error: {e}")
     else:
         return "마감됨"
 
@@ -85,7 +78,8 @@ def update_user_upcoming_list(user_name):
     
     courses = convert_user_name_to_token(user_name)
     if not courses:
-        return JsonResponse({'success':False, 'error': '토큰 또는 정보 없음'}, status=400)
+        print("It is not courses...")
+        return lecture_data
     
     # 강의 목록 조회
     courses_list = list(courses)

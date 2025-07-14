@@ -2,7 +2,6 @@ from django.utils import timezone
 from django.views.decorators.http import require_GET
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from upcoming_list.services import convert_user_name_to_token, get_d_day_str, get_week_from_maps
 from .models import UpcomingData
 from .services import update_user_upcoming_list
 
