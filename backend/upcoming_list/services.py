@@ -13,17 +13,17 @@ def convert_user_name_to_token(req):
         data = json.loads(req.body)
         user_name = data.get('user_name')
         if not user_name:
-            return JsonResponse({'success': False, 'error': 'user_name이 없습니다.'}, status=400)
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': f'요청 파싱 오류: {str(e)}'}, status=400)
+            return None
+    except Exception:
+        return None
 
     # 토큰 조회
     try:
         token = get_token_by_username(user_name)
         if not token:
-            return JsonResponse({'success': False, 'error': '토큰이 없습니다.'}, status=400)
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': f'토큰 조회 오류: {str(e)}'}, status=400)
+            return None
+    except Exception:
+        return None
        
     # Canvas API 연결
     try:
@@ -32,7 +32,7 @@ def convert_user_name_to_token(req):
         user = canvas.get_current_user()
         courses = user.get_courses()
     except Exception as e:
-        return JsonResponse({'success': False, 'error': f'Canvas API 오류: {str(e)}'}, status=400)
+        return None
     
     return courses
     
@@ -85,7 +85,7 @@ def update_user_upcoming_list(user_name):
     
     courses = convert_user_name_to_token(user_name)
     if not courses:
-        return
+        return JsonResponse({'success':False, 'error': '토큰 또는 정보 없음'}, status=400)
     
     # 강의 목록 조회
     courses_list = list(courses)
@@ -144,5 +144,5 @@ def update_user_upcoming_list(user_name):
                 )
         except Exception:
             continue
-    return JsonResponse({'success': True, 'lecture_data': lecture_data})
+    return lecture_data
     
