@@ -73,3 +73,6 @@ def get_week_from_maps(a, assignment_week_map):
     if not week_clean:
         week_clean = extract_week_number(a.name)
     return week_clean
+
+def update_user_upcoming_list(user_name):
+    pass

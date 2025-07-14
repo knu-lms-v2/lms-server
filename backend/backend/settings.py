@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+from celery.schedules import crontab
 from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv()
@@ -132,3 +133,11 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 FERNET_KEY = os.environ.get("FERNET_KEY")
+
+# Celery Beat 스케줄 등록
+CELERY_BEAT_SCHEDULE = {
+    'update-recent-users-data-daily':{
+        'task': 'upcoming_list.tasks.update_recent_users_data',
+        'schedule': crontab(hour=0, minute=0),
+    },
+}

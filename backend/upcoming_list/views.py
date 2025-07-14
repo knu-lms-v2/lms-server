@@ -1,4 +1,4 @@
-from datetime import timezone
+from django.utils import timezone
 from django.views.decorators.http import require_GET
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
