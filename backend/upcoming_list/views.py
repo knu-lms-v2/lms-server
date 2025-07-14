@@ -17,7 +17,8 @@ def upcoming(req):
         return JsonResponse({'error': 'POST 요청이 아닙니다.'}, status=405)
     
     user_name = req.POST.get('user_name', '')
-    update_user_upcoming_list(user_name)
+    lecture_data = update_user_upcoming_list(user_name)
+    return JsonResponse({'success': True, 'lecture_data': lecture_data})
 
 @require_GET
 def get_upcoming_data(req):
