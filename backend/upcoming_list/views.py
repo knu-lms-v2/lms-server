@@ -1,3 +1,4 @@
+from datetime import timezone
 from django.views.decorators.http import require_GET
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -91,12 +92,14 @@ def upcoming(req):
 def get_upcoming_data(req):
     user_name = req.GET.get('user_name', '')
     data = UpcomingData.objects.filter(user_name=user_name).order_by('-created_at')
+    data.update(last_accessed=timezone.now())
     result = [
         {
             'type': d.type,
             'course_name': d.course_name,
             'week': d.week,
-            'remaining_days': d.remaining_days
+            'remaining_days': d.remaining_days,
+            'last_accessed': d.last_accessed
         }
         for d in data
     ]
