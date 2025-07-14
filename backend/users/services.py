@@ -21,6 +21,6 @@ def get_token_by_username(user_name):
     if token_obj:
         try:
             return decrypt_token(token_obj.token)
-        except Exception:
+        except Exception as e:
+            print(f"error: {e}")
             return None
-    return None

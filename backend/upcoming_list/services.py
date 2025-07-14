@@ -75,7 +75,7 @@ def update_user_upcoming_list(user_name):
     exam_week_map = {}
     video_week_map = {}
     upcoming_type = ""
-    
+
     courses = convert_user_name_to_token(user_name)
     if not courses:
         print("It is not courses...")

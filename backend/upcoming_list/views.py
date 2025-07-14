@@ -1,9 +1,10 @@
-from django.utils import timezone
+import json
 from django.views.decorators.http import require_GET
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import UpcomingData
 from .services import update_user_upcoming_list
+
 
 # Create your views here.
 @csrf_exempt
@@ -14,8 +15,12 @@ def upcoming(req):
     """
     if req.method != 'POST':
         return JsonResponse({'error': 'POST 요청이 아닙니다.'}, status=405)
-    
-    user_name = req.POST.get('user_name', '')
+    else:
+        if req.content_type == 'application/json':
+            data = json.loads(req.body)
+            user_name = data.get('user_name', '')
+        else:
+            user_name = req.POST.get('user_name', '')
     lecture_data = update_user_upcoming_list(user_name)
     return JsonResponse({'success': True, 'lecture_data': lecture_data})
 
@@ -25,8 +30,8 @@ def get_upcoming_data(req):
     - 최근 접속자(7일 이내)의 경우, 바로 DB에서 정보를 긁어와 프론트로 전달
     """
     user_name = req.GET.get('user_name', '')
+    print(user_name)
     data = UpcomingData.objects.filter(user_name=user_name).order_by('-created_at')
-    data.update(last_accessed=timezone.now())
     result = [
         {
             'type': d.type,
