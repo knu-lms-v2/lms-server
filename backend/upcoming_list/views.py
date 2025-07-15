@@ -8,7 +8,7 @@ from .services import update_user_upcoming_list
 
 # Create your views here.
 @csrf_exempt
-def upcoming(req):
+def set_upcoming_data(req):
     """
     - 장기 미접속자(7일 이상)의 로그인 시, 띄울 데이터 정보 갱신
     - 주어진 user_name에 해당하는 토큰을 조회 및 활용하여 강의/과제/영상 정보를 추출
