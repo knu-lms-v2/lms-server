@@ -6,6 +6,9 @@ from users.services import get_token_by_username
 from .models import UpcomingData
 
 def convert_user_name_to_token(user_name):
+    """
+        user_name을 토큰으로 반환하여 데이터 추출하는 함수
+    """
     # 토큰 조회
     try:
         token = get_token_by_username(user_name)
@@ -38,7 +41,7 @@ def is_due_within_7_days(due_at) -> bool:
 
 def extract_week_number(week_str) -> str:
     """
-    "00주차" 형식으로 반환한다.
+        "00주차" 형식으로 반환한다.
     """
     match = re.search(r'(\d+)\s*주', week_str)
     if match:
@@ -46,6 +49,9 @@ def extract_week_number(week_str) -> str:
     return None
 
 def get_week_from_maps(a, assignment_week_map):
+    """
+        딕셔너리의 값을 "00주차" 형식으로 바꾸기 위한 함수
+    """
     week_raw = assignment_week_map.get(a.id)
     week_clean = extract_week_number(week_raw) if week_raw else None
     if not week_clean:
@@ -53,6 +59,10 @@ def get_week_from_maps(a, assignment_week_map):
     return week_clean
 
 def update_user_upcoming_list(user_name):
+    """
+        사용자의 강의/과제/영상의 마감일이 7일 이내에
+        존재하면 DB에 저장하고 반환하는 함수
+    """
     lecture_data = []
     assignment_week_map = {}
     exam_week_map = {}
