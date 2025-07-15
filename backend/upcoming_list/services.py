@@ -96,8 +96,8 @@ def update_user_upcoming_list(user_name):
                 if not due_at:
                     continue
 
-                due_date = is_due_within_7_days(due_at)
-                if not due_date:
+                if not is_due_within_7_days(due_at):
+                    print("not exists due_date...")
                     continue
 
                 week_clean = get_week_from_maps(a, assignment_week_map)
@@ -105,7 +105,7 @@ def update_user_upcoming_list(user_name):
                     'type': upcoming_type,
                     'course_name': course_name,
                     'week': week_clean,
-                    'due_date': due_date
+                    'due_date': due_at
                 }
                 lecture_data.append(data)
 
@@ -116,7 +116,7 @@ def update_user_upcoming_list(user_name):
                     course_name=course_name,
                     week=week_clean,
                     defaults={
-                        'due_date': due_date
+                        'due_date': due_at
                     }
                 )
         except Exception as e:
