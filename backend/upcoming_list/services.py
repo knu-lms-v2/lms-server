@@ -1,5 +1,4 @@
-from datetime import datetime, timedelta
-from django.utils import timezone
+from datetime import datetime, timedelta, timezone
 import json
 import re
 from canvasapi import Canvas
@@ -35,9 +34,6 @@ def is_due_within_7_days(due_at) -> bool:
     """
     now = datetime.now(timezone.utc)
     end = now + timedelta(days=7)
-    print(f"now: {now}")
-    print(f"end: {end}")
-    print(f"remaining_days: {due_at}")
     return now <= due_at <= end
 
 def extract_week_number(week_str) -> str:
@@ -100,7 +96,8 @@ def update_user_upcoming_list(user_name):
                 if not due_at:
                     continue
 
-                if not is_due_within_7_days(due_at):
+                due_date = is_due_within_7_days(due_at)
+                if not due_date:
                     continue
 
                 week_clean = get_week_from_maps(a, assignment_week_map)
@@ -108,7 +105,7 @@ def update_user_upcoming_list(user_name):
                     'type': upcoming_type,
                     'course_name': course_name,
                     'week': week_clean,
-                    'remaining_days': due_at
+                    'due_date': due_date
                 }
                 lecture_data.append(data)
 
@@ -119,10 +116,11 @@ def update_user_upcoming_list(user_name):
                     course_name=course_name,
                     week=week_clean,
                     defaults={
-                        'remaining_days':remaining_days
+                        'due_date': due_date
                     }
                 )
-        except Exception:
+        except Exception as e:
+            print(f"error: {e}")
             continue
     return lecture_data
     
