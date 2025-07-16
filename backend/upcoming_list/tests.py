@@ -1,26 +1,27 @@
-from datetime import datetime, timedelta,timezone
+from canvasapi import Canvas
+import pprint
 
-def is_due_within_7_days(due_dt):
-    now = datetime.now(timezone.utc)
-    end = now + timedelta(days=7)
-    return now <= due_dt <= end
+API_URL = "https://knulms.kongju.ac.kr/"
+API_KEY = "uvvHRNOilQjXYsk7buRNhKZBkmuzfYciiKsaL4YNq5tif97vioWwEUnZXrQ5AWmf"
 
-# 오늘
-now = datetime.now(timezone.utc)
-print(is_due_within_7_days(now))  # True
+canvas = Canvas(API_URL, API_KEY)
 
-# 3일 뒤
-in_3_days = now + timedelta(days=3)
-print(is_due_within_7_days(in_3_days))  # True
+# 1. 내 강의 전체 목록 가져오기
+user = canvas.get_current_user()
+courses = user.get_courses()
 
-# 7일 뒤
-in_7_days = now + timedelta(days=7)
-print(is_due_within_7_days(in_7_days))  # True
+# 2. 강의명 "소프트웨어공학"인 강의 찾기
+target_course = None
+# for course in courses:
+course = courses[0]
+for i in course.get_assignments():
+    print(dir(i))
+    # if course.name == "소프트웨어공학 03분반":
+    #     target_course = course
+    #     break
 
-# 8일 뒤
-in_8_days = now + timedelta(days=8)
-print(is_due_within_7_days(in_8_days))  # False
-
-# 1일 전(이미 마감)
-yesterday = now - timedelta(days=1)
-print(is_due_within_7_days(yesterday))  # False
+if target_course:
+    # 3. 강의의 모든 정보 출력
+    print(target_course.__dict__)
+else:
+    print("소프트웨어공학 강의를 찾을 수 없습니다.")
