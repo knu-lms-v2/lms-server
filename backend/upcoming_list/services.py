@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta, timezone
-import json
 import re
 from canvasapi import Canvas
 from users.services import get_token_by_username
@@ -108,7 +107,7 @@ def update_user_upcoming_list(user_name):
 
                 if not is_due_within_7_days(due_at):
                     print("not exists due_date...")
-                    continue
+                    # continue
 
                 week_clean = get_week_from_maps(a, assignment_week_map)
                 data = {
