@@ -15,12 +15,11 @@ def save_user_token(token, user_name) -> timezone:
     )
     return now
 
-def get_token_by_username(user_name):
+def get_token_by_username(user_name) -> str:
     """user_name으로 토큰을 조회"""
-    token_obj = EncryptedToken.objects.filter(username=user_name).order_by('-id').first()
-    if token_obj:
-        try:
-            return decrypt_token(token_obj.token)
-        except Exception as e:
-            print(f"error: {e}")
-            return None
+    try:
+        token_obj = EncryptedToken.objects.get(username=user_name)
+        return decrypt_token(token_obj.token)
+    except Exception as e:
+        print(f'error: {e}')
+        token_obj = None
