@@ -13,16 +13,16 @@ def set_upcoming_data(req):
     - 장기 미접속자(7일 이상)의 로그인 시, 띄울 데이터 정보 갱신
     - 주어진 user_name에 해당하는 토큰을 조회 및 활용하여 강의/과제/영상 정보를 추출
     """
-    if req.method != 'POST':
-        return JsonResponse({'error': 'POST 요청이 아닙니다.'}, status=405)
-    else:
-        if req.content_type == 'application/json':
+    if req.method == 'POST':
+        try:
             data = json.loads(req.body)
             user_name = data.get('user_name', '')
-        else:
-            user_name = req.POST.get('user_name', '')
-    lecture_data = update_user_upcoming_list(user_name)
-    return JsonResponse({'success': True, 'lecture_data': lecture_data})
+            lecture_data = update_user_upcoming_list(user_name)
+            return JsonResponse({'success': True, 'lecture_data': lecture_data})
+        except Exception as e:
+            print(f'error: {e}')
+    else:
+        return JsonResponse({'error': 'POST 요청이 아닙니다.'}, status=405)
 
 @require_GET
 def get_upcoming_data(req):
