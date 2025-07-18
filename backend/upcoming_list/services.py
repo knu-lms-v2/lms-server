@@ -47,94 +47,91 @@ def extract_week_number(week_str) -> str:
         return f"{match.group(1)}주차"
     return None
 
-def get_week_from_maps(a, assignment_week_map):
-    """
-        딕셔너리의 값을 "00주차" 형식으로 바꾸기 위한 함수
-    """
-    week_raw = assignment_week_map.get(a.id)
-    week_clean = extract_week_number(week_raw) if week_raw else None
-    if not week_clean:
-        week_clean = extract_week_number(a.name)
-    return week_clean
-
-def is_video_file(filename) -> bool:
+def is_video_file(filename):
     video_extensions = ('.mp4', '.mov', '.avi', '.wmv', '.mkv', '.flv', '.webm')
     return filename.lower().endswith(video_extensions)
 
+def is_video_page(content):
+    return (
+        "<video" in content.lower() or
+        "<iframe" in content.lower() or
+        re.search(r'(youtube\.com|vimeo\.com|kaltura\.com|panopto\.com)', content, re.IGNORECASE)
+    )
+
+def save_lecture_data(lecture_data, user_name, upcoming_type, course_name, week_clean, due_at):
+    data = {
+        'type': upcoming_type,
+        'course_name': course_name,
+        'week': week_clean,
+        'due_date': due_at
+    }
+    lecture_data.append(data)
+    UpcomingData.objects.update_or_create(
+        user_name=user_name,
+        type=upcoming_type,
+        course_name=course_name,
+        week=week_clean,
+        defaults={'due_date': due_at}
+    )
+
 def update_user_upcoming_list(user_name):
-    """
-        사용자의 강의/과제/영상의 마감일이 7일 이내에
-        존재하면 DB에 저장하고 반환하는 함수
-    """
     lecture_data = []
     week_map = {}
+    item_info = {}  # (type, content_id): (upcoming_type, due_at)
 
     courses = convert_user_name_to_token(user_name)
     if not courses:
         print("It is not courses...")
         return lecture_data
-    
-    # 활성화된 강의 목록 조회
+
     filtered_courses = [course for course in courses if not getattr(course, "access_restricted_by_date", False)]
 
-    # 수강 중인 과목 대상 반복
     for course in filtered_courses:
         course_name = getattr(course, "name", "이름없음")
-        # 1. 모듈 정보 수집
         try:
             for m in course.get_modules():
-                week_name = m.name # 주차학습의 1주차, 2주차, ...
-                for item in m.get_module_items(): # 주차학습 1주차의 내용들...
+                week_name = m.name
+                for item in m.get_module_items():
+                    key = (item.type, item.content_id)
+                    week_map[key] = week_name
+
+                    # 타입별로 upcoming_type, due_at 추출
                     if item.type == "Assignment":
                         upcoming_type = "과제"
-                        week_map[(item.type, item.content_id)] = week_name
+                        due_at = getattr(item, "due_at", None)
                     elif item.type == "Quiz":
                         upcoming_type = "시험"
-                        week_map[(item.type, item.content_id)] = week_name
-                    elif item.type == 'ExternalTool':
+                        due_at = getattr(item, "due_at", None)
+                    elif item.type == "ExternalTool":
                         upcoming_type = "영상"
-                        week_map[(item.type, item.content_id)] = week_name
-                    elif item.type == 'File':
+                        due_at = getattr(item, "due_at", None)
+                    elif item.type == "File":
                         filename = getattr(item, 'title', '')
                         if is_video_file(filename):
-                            upcoming_type = '영상'
-                            week_map[(item.type, item.content_id)] = week_name
+                            upcoming_type = "영상"
+                            due_at = getattr(item, "due_at", None)
+                        else:
+                            continue
+                    elif item.type == "Page":
+                        content = getattr(item, "body", "")
+                        if is_video_page(content):
+                            upcoming_type = "영상"
+                            due_at = getattr(item, "due_at", None)
+                        else:
+                            continue
+                    else:
+                        continue
+
+                    item_info[key] = (upcoming_type, due_at)
         except Exception as e:
             print(f'error: {e}')
             continue
 
-        # 2. 과제 정보에 week 추가
-        try:
-            for a in course.get_assignments():
-                due_at = getattr(a, "due_at_date", None)
-                if not due_at:
-                    continue
+        # 한 번에 처리
+        for key, (upcoming_type, due_at) in item_info.items():
+            if not due_at or not is_due_within_7_days(due_at):
+                continue
+            week_clean = extract_week_number(week_map.get(key, ""))
+            save_lecture_data(lecture_data, user_name, upcoming_type, course_name, week_clean, due_at)
 
-                if not is_due_within_7_days(due_at):
-                    print("not exists due_date...")
-                    # continue
-
-                week_clean = get_week_from_maps(a, assignment_week_map)
-                data = {
-                    'type': upcoming_type,
-                    'course_name': course_name,
-                    'week': week_clean,
-                    'due_date': due_at
-                }
-                lecture_data.append(data)
-
-                # DB에 저장
-                UpcomingData.objects.update_or_create(
-                    user_name=user_name,
-                    type=upcoming_type,
-                    course_name=course_name,
-                    week=week_clean,
-                    defaults={
-                        'due_date': due_at
-                    }
-                )
-        except Exception as e:
-            print(f"error: {e}")
-            continue
     return lecture_data
-    
