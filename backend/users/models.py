@@ -7,3 +7,5 @@ class EncryptedToken(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(null=True, blank=True)
     
+    def __str__(self):
+        return self.username
