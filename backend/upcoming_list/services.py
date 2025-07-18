@@ -57,30 +57,29 @@ def get_week_from_maps(a, assignment_week_map):
         week_clean = extract_week_number(a.name)
     return week_clean
 
+def is_video_file(filename) -> bool:
+    video_extensions = ('.mp4', '.mov', '.avi', '.wmv', '.mkv', '.flv', '.webm')
+    return filename.lower().endswith(video_extensions)
+
 def update_user_upcoming_list(user_name):
     """
         사용자의 강의/과제/영상의 마감일이 7일 이내에
         존재하면 DB에 저장하고 반환하는 함수
     """
     lecture_data = []
-    assignment_week_map = {}
-    exam_week_map = {}
-    video_week_map = {}
-    upcoming_type = ""
+    week_map = {}
 
     courses = convert_user_name_to_token(user_name)
     if not courses:
         print("It is not courses...")
         return lecture_data
     
-    # 강의 목록 조회
-    courses_list = list(courses)
-    filtered_courses = [course for course in courses_list if not getattr(course, "access_restricted_by_date", False)]
+    # 활성화된 강의 목록 조회
+    filtered_courses = [course for course in courses if not getattr(course, "access_restricted_by_date", False)]
 
     # 수강 중인 과목 대상 반복
     for course in filtered_courses:
         course_name = getattr(course, "name", "이름없음")
-
         # 1. 모듈 정보 수집
         try:
             for m in course.get_modules():
@@ -88,14 +87,20 @@ def update_user_upcoming_list(user_name):
                 for item in m.get_module_items(): # 주차학습 1주차의 내용들...
                     if item.type == "Assignment":
                         upcoming_type = "과제"
-                        assignment_week_map[item.content_id] = week_name
+                        week_map[(item.type, item.content_id)] = week_name
                     elif item.type == "Quiz":
                         upcoming_type = "시험"
-                        exam_week_map[item.content_id] = week_name
-                    elif item.type == "File":
+                        week_map[(item.type, item.content_id)] = week_name
+                    elif item.type == 'ExternalTool':
                         upcoming_type = "영상"
-                        video_week_map[item.content_id] = week_name
-        except Exception:
+                        week_map[(item.type, item.content_id)] = week_name
+                    elif item.type == 'File':
+                        filename = getattr(item, 'title', '')
+                        if is_video_file(filename):
+                            upcoming_type = '영상'
+                            week_map[(item.type, item.content_id)] = week_name
+        except Exception as e:
+            print(f'error: {e}')
             continue
 
         # 2. 과제 정보에 week 추가
