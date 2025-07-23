@@ -15,8 +15,8 @@ def set_upcoming_data(req):
     """
     if req.method == 'POST':
         try:
-            data = json.loads(req.body)
-            user_name = data.get('user_name', '')
+            json_data = json.loads(req.body)
+            user_name = json_data.get('user_name', '')
             lecture_data = update_user_upcoming_list(user_name)
             return JsonResponse({'success': True, 'lecture_data': lecture_data})
         except Exception as e:
@@ -29,16 +29,20 @@ def get_upcoming_data(req):
     """
     - 최근 접속자(7일 이내)의 경우, 바로 DB에서 정보를 긁어와 프론트로 전달
     """
-    user_name = req.GET.get('user_name', '')
-    print(user_name)
-    data = UpcomingData.objects.filter(user_name=user_name).order_by('-created_at')
-    result = [
-        {
-            'type': d.type,
-            'course_name': d.course_name,
-            'week': d.week,
-            'remaining_days': d.remaining_days
-        }
-        for d in data
-    ]
+    if req.method == "GET":
+        try:
+            json_data = json.loads(req.body)
+            user_name = json_data.get('user_name', '')
+            data = UpcomingData.objects.filter(user_name=user_name).order_by('-created_at')
+            result = [
+                {
+                    'type': d.type,
+                    'course_name': d.course_name,
+                    'week': d.week,
+                    'remaining_days': d.remaining_days
+                }
+                for d in data
+            ]
+        except Exception as e:
+            print(f"error: {e}")
     return JsonResponse({'success': True, 'lecture_data': result})
