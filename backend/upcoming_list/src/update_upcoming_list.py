@@ -1,25 +1,21 @@
 from datetime import datetime, timedelta, timezone
 import re
 from canvasapi import Canvas
-from users.services import get_token_by_username
-from .models import UpcomingData
+from backend.users.src.save_token_to_database import get_token_by_username
+from ..models import UpcomingData
 
 def convert_user_name_to_token(user_name):
     """
-        user_name을 토큰으로 반환하여 데이터 추출하는 함수
+        user_name -> 토큰 -> courses 반환
     """
-    # 토큰 조회
     try:
+        # 토큰 조회
         token = get_token_by_username(user_name)
         if not token:
             print("It is not token...")
             return None
-    except Exception as e:
-        print(f"error: {e}")
-        return None
-       
-    # Canvas API 연결
-    try:
+         
+        # Canvas API 연결
         API_URL = "https://knulms.kongju.ac.kr/"
         canvas = Canvas(API_URL, token)
         user = canvas.get_current_user()
@@ -27,7 +23,6 @@ def convert_user_name_to_token(user_name):
     except Exception as e:
         print(f"error: {e}")
         return None
-    
     return courses
     
 def is_due_within_7_days(due_at) -> bool:
@@ -59,6 +54,9 @@ def is_video_page(content):
     )
 
 def save_lecture_data(lecture_data, user_name, upcoming_type, course_name, week_clean, due_at):
+    """
+        upcoming_list 데이터 DB에 저장
+    """
     data = {
         'type': upcoming_type,
         'course_name': course_name,
@@ -75,6 +73,9 @@ def save_lecture_data(lecture_data, user_name, upcoming_type, course_name, week_
     )
 
 def update_user_upcoming_list(user_name):
+    """
+        course에서 어떤 모듈인지 타입 지정해서 DB에 저장
+    """
     lecture_data = []
     week_map = {}
     item_info = {}  # (type, content_id): (upcoming_type, due_at)

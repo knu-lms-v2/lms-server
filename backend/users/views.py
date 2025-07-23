@@ -1,7 +1,7 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from canvasapi import Canvas
-from .services import save_user_token, get_token_by_username
+from .src.save_token_to_database import save_user_token, get_token_by_username
 from .models import EncryptedToken
 import json
 

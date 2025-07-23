@@ -3,7 +3,7 @@ from django.views.decorators.http import require_GET
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import UpcomingData
-from .services import update_user_upcoming_list
+from .src.update_upcoming_list import update_user_upcoming_list
 
 
 # Create your views here.

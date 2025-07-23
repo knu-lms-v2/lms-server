@@ -1,5 +1,5 @@
-from .models import EncryptedToken
-from .utils import decrypt_token, encrypt_token
+from ..models import EncryptedToken
+from .encryption import decrypt_token, encrypt_token
 from django.utils import timezone
 
 def save_user_token(token, user_name) -> timezone:

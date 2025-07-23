@@ -1,8 +1,8 @@
 from celery import shared_task
 from django.utils import timezone
 from datetime import timedelta
-from .models import UpcomingData
-from .services import update_user_upcoming_list
+from ..models import UpcomingData
+from .update_upcoming_list import update_user_upcoming_list
 
 @shared_task
 def update_recent_users_data():
